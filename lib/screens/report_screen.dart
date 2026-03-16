@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../services/event_storage.dart';
+import '../widgets/global_app_bar.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
@@ -22,8 +23,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
     return Scaffold(
 
-      appBar: AppBar(
-        title: const Text("Reports & Appointments"),
+      appBar: const GlobalAppBar(
+        title:"Reports & Appointments",
       ),
 
       body: Column(

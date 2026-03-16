@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/global_app_bar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -6,8 +7,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profile"),
+      appBar: const GlobalAppBar(
+        title: "Profile"
       ),
       body: const Center(
         child: Text(

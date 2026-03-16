@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/event_storage.dart';
+import '../widgets/global_app_bar.dart';
 
 class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
@@ -444,10 +445,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
     return Scaffold(
 
-      appBar: AppBar(
-        title: const Text("Daily Reminders"),
+      appBar: const GlobalAppBar(
+        title: "Daily Reminders",
       ),
-
+      
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: buildReminderWidgets(),

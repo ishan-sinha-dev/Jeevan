@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jeevan/widgets/global_app_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -6,48 +7,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: AppBar(
-        title: const Text("Jeevan"),
-        actions: [
-
-          const CircleAvatar(
-            radius: 16,
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              color: Colors.green,
-            ),
-          ),
-
-          const SizedBox(width: 10),
-
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.menu),
-            onSelected: (value) {
-
-              if (value == "logout") {
-
-                Navigator.popUntil(context, (route) => route.isFirst);
-
-              }
-
-            },
-            itemBuilder: (context) => [
-
-              const PopupMenuItem(
-                value: "logout",
-                child: Text("Logout"),
-              ),
-
-            ],
-          ),
-
-          const SizedBox(width: 10),
-
-        ],
+      appBar: const GlobalAppBar(
+        title: "Home",
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
