@@ -53,6 +53,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   void showAppointmentDialog() {
 
     TextEditingController titleController = TextEditingController();
+    TextEditingController purposeController = TextEditingController();
 
     DateTime selectedDate = DateTime.now();
     TimeOfDay selectedTime = TimeOfDay.now();
@@ -65,54 +66,65 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
           title: const Text("Add Appointment"),
 
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
 
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: "Appointment Title",
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: "Appointment Title",
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-              ElevatedButton(
-                onPressed: () async {
+                TextField(
+                  controller: purposeController,
+                  decoration: const InputDecoration(
+                    labelText: "Purpose of Appointment",
+                  ),
+                ),
 
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2024),
-                    lastDate: DateTime(2030),
-                  );
+                const SizedBox(height: 10),
 
-                  if (picked != null) {
-                    selectedDate = picked;
-                  }
+                ElevatedButton(
+                  onPressed: () async {
 
-                },
-                child: const Text("Select Date"),
-              ),
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2024),
+                      lastDate: DateTime(2030),
+                    );
 
-              ElevatedButton(
-                onPressed: () async {
+                    if (picked != null) {
+                      selectedDate = picked;
+                    }
 
-                  TimeOfDay? picked = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
+                  },
+                  child: const Text("Select Date"),
+                ),
 
-                  if (picked != null) {
-                    selectedTime = picked;
-                  }
+                ElevatedButton(
+                  onPressed: () async {
 
-                },
-                child: const Text("Select Time"),
-              ),
+                    TimeOfDay? picked = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
 
-            ],
+                    if (picked != null) {
+                      selectedTime = picked;
+                    }
+
+                  },
+                  child: const Text("Select Time"),
+                ),
+
+              ],
+            ),
           ),
 
           actions: [
@@ -139,7 +151,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
                   reminders.add({
                     "title": titleController.text,
-                    "type": "Appointment",
+                    "purpose": purposeController.text,
+                    "type": "appointment",
                     "date": appointmentDateTime
                   });
 
@@ -278,7 +291,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
                     reminders.add({
                       "title": medicineController.text,
-                      "type": "Medicine",
+                      "type": "medicine",
                       "date": reminderTime
                     });
 
@@ -303,6 +316,129 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   }
 
+  String formatTime(DateTime date) {
+
+    int hour = date.hour;
+    int minute = date.minute;
+
+    String period = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+    if (hour == 0) hour = 12;
+
+    String minuteStr = minute.toString().padLeft(2, '0');
+
+    return "$hour:$minuteStr $period";
+  }
+
+  List<Widget> buildReminderWidgets() {
+
+    Map<String, List<Map<String, dynamic>>> grouped = {};
+
+    for (var reminder in reminders) {
+
+      DateTime date = reminder["date"];
+      String key = "${date.year}-${date.month}-${date.day}";
+
+      if (!grouped.containsKey(key)) {
+        grouped[key] = [];
+      }
+
+      grouped[key]!.add(reminder);
+    }
+
+    List<Widget> widgets = [];
+
+    grouped.forEach((dateKey, dayReminders) {
+
+      dayReminders.sort((a, b) => a["date"].compareTo(b["date"]));
+
+      DateTime date = dayReminders.first["date"];
+
+      widgets.add(
+
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Text(
+            "${date.day}/${date.month}/${date.year}",
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+      );
+
+      int dose = 1;
+
+      for (var reminder in dayReminders) {
+
+        DateTime time = reminder["date"];
+
+        widgets.add(
+
+          Card(
+            elevation: 3,
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  if (reminder["type"] == "medicine")
+                    Text(
+                      "Dose $dose",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    reminder["title"],
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+
+                  if (reminder["type"] == "appointment")
+                    Text(
+                      reminder["purpose"] ?? "",
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    formatTime(time),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+
+        );
+
+        dose++;
+
+      }
+
+    });
+
+    return widgets;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -312,31 +448,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
         title: const Text("Daily Reminders"),
       ),
 
-      body: ListView.builder(
-        itemCount: reminders.length,
-        itemBuilder: (context, index) {
-
-          final reminder = reminders[index];
-
-          return Card(
-            child: ListTile(
-
-              leading: Icon(
-                reminder["type"] == "medicine"
-                    ? Icons.medication
-                    : Icons.calendar_today,
-              ),
-
-              title: Text(reminder["title"]),
-
-              subtitle: Text(
-                reminder["date"].toString(),
-              ),
-
-            ),
-          );
-
-        },
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: buildReminderWidgets(),
       ),
 
       floatingActionButton: FloatingActionButton(
