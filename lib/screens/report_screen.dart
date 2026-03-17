@@ -13,6 +13,16 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
 
   DateTime today = DateTime.now();
+    @override
+  void initState() {
+    super.initState();
+    loadReports();
+  }
+
+  Future loadReports() async {
+    await EventStorage.loadReportsFromFirebase();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

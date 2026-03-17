@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 class EventStorage {
 
   static List<Map<String, dynamic>> events = [];
@@ -20,12 +23,13 @@ class EventStorage {
       "title": title,
       "date": date,
       "type": "appointment",
+      "time": "${date.hour}:${date.minute.toString().padLeft(2, '0')}",
       "status": "upcoming"
     });
 
   }
 
-  // Get events for a specific date
+ 
   static List<Map<String, dynamic>> getEventsForDay(DateTime day) {
 
     return events.where((event) {
@@ -40,7 +44,6 @@ class EventStorage {
 
   }
 
-  // Update appointments that have passed
   static void updateAppointments() {
 
     DateTime today = DateTime.now();
@@ -58,6 +61,34 @@ class EventStorage {
         }
 
       }
+
+    }
+
+  }
+
+  static Future loadReportsFromFirebase() async {
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return;
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection("reports")
+        .where("userId", isEqualTo: user.uid)
+        .get();
+
+    for (var doc in snapshot.docs) {
+
+      final data = doc.data();
+
+      DateTime reportDate =
+          (data["reportDate"] as Timestamp).toDate();
+
+      events.add({
+        "title": data["title"] ?? "Medical Report",
+        "date": reportDate,
+        "type": "report"
+      });
 
     }
 

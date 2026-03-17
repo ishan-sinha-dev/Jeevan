@@ -5,15 +5,19 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:jeevan/services/report_service.dart';
+
 
 class ScanScreen extends StatefulWidget {
-  const ScanScreen({super.key});
+ const ScanScreen({super.key});
+ 
 
   @override
   State<ScanScreen> createState() => _ScanScreenState();
 }
 
 class _ScanScreenState extends State<ScanScreen> {
+  final ReportService reportService = ReportService();
 
   File? image;
   String extractedText = "";
@@ -128,24 +132,26 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   // SAVE SINGLE REPORT
-  void saveReport() {
+Future<void> saveReport() async {
 
-    if (image == null || extractedText.isEmpty) return;
-
-    setState(() {
-
-      savedReports.add({
-        "image": image,
-        "text": extractedText,
-        "date": DateTime.now().toString()
-      });
-
-      image = null;
-      extractedText = "";
-
-    });
-
+  if (image == null || extractedText.isEmpty) {
+    print("Image or OCR text missing");
+    return;
   }
+
+  print("Saving report...");
+
+  await reportService.saveReport(
+    image: image!,
+    extractedText: extractedText,
+    reportDate: DateTime.now(),
+    title: "Medical Report",
+    description: "Uploaded from scanner",
+  );
+
+  print("Report saved");
+
+}
 
   @override
   Widget build(BuildContext context) {
