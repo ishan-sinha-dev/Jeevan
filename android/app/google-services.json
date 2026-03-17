@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "99718845829",
+    "project_id": "jeevan-b42a9",
+    "storage_bucket": "jeevan-b42a9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99718845829:android:985b2981689234224ba0ec",
+        "android_client_info": {
+          "package_name": "com.example.jeevan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAChhu8Rlv5Y3niDGDf3H4HdfrXHAIQoOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
