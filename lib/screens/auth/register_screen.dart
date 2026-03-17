@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'package:jeevan/services/auth_services.dart';
 
 class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+  RegisterScreen({super.key});
+
+  AuthService authService = AuthService();
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +44,7 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(height: 15),
 
             TextField(
+              controller: emailController, 
               decoration: InputDecoration(
                 hintText: "Email",
                 border: OutlineInputBorder(
@@ -49,6 +56,7 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(height: 15),
 
             TextField(
+              controller: passwordController, 
               obscureText: true,
               decoration: InputDecoration(
                 hintText: "Password",
@@ -61,22 +69,49 @@ class RegisterScreen extends StatelessWidget {
             const SizedBox(height: 25),
 
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+
+                final user = await authService.register(
+                  emailController.text.trim(),
+                  passwordController.text.trim(),
+                );
+
+                if (user != null) {
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Account created successfully"),
+                    ),
+                  );
+
+                  Navigator.pop(context); 
+
+                } else {
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Registration failed"),
+                    ),
+                  );
+
+                }
+
               },
               child: const Text("Register"),
             ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
-                child: const Text("Already have an account? Login"),
-              ),
+
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              },
+              child: const Text("Already have an account? Login"),
+            ),
+
           ],
         ),
       ),

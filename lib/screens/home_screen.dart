@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
           children: [
 
             const Text(
-              "Hi, Ishan 👋",
+              "Hi, User 👋\nWelcome back to Jeevan",
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
