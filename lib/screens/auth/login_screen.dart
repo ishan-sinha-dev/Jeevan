@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jeevan/screens/main_navigation.dart';
 import 'package:jeevan/screens/auth/register_screen.dart';
+import 'package:jeevan/services/auth_services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +16,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  final AuthService authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -79,18 +82,35 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 30),
 
               TextButton(
-                onPressed: () {
+                onPressed: () async {
 
                   if (_formKey.currentState!.validate()) {
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MainNavigation(),
-                      ),
+                    final user = await authService.login(
+                    emailController.text.trim(),
+                    passwordController.text.trim(),
                     );
 
-                  }
+                    if (user != null) {
+
+                    Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainNavigation(),
+                    ),
+                    );
+
+                    } else {
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Invalid email or password"),
+                    ),
+                    );
+
+                    }
+
+                    }
 
                 },
                 child: const Text("Login"),
