@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'package:jeevan/services/auth_services.dart';
 
-class RegisterScreen extends StatelessWidget {
-  RegisterScreen({super.key});
+class  RegisterScreen extends StatelessWidget {
+ RegisterScreen({super.key});
 
   AuthService authService = AuthService();
 

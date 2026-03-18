@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/event_storage.dart';
 import '../widgets/global_app_bar.dart';
+import 'dart:async';
 
 class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
@@ -295,6 +296,28 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       "type": "medicine",
                       "date": reminderTime
                     });
+                                    final Duration delay = reminderTime.difference(DateTime.now());
+                if (delay.isNegative) continue; // skip past times
+
+                final String name = medicineController.text;
+                final int doseNum = i + 1;
+
+                Timer(delay, () {
+                  if (!mounted) return;
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text('💊 Medicine Reminder'),
+                      content: Text('Time to take $name (Dose $doseNum)'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                });
 
                   }
 
@@ -460,5 +483,4 @@ class _RemindersScreenState extends State<RemindersScreen> {
       ),
 
     );
-  }
-}
+  }}
